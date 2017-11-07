@@ -1,0 +1,73 @@
+version: '2'
+services:
+  web-nginx:
+    container_name: web-nginx
+    image: nginx:1.12.1
+    ports:
+      - "80:80"
+    volumes:
+      #- ~/workspace/dockerVmF/php-nginx:/data
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    volumes_from:
+      - wwwdata
+    environment:
+      PATH: /usr/local/nvm/versions/node/v6.3.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      NGINX_GENERATE_DEFAULT_VHOST: 1
+      STATUS_PAGE_ALLOWED_IP: 127.0.0.1
+      NVM_DIR: /usr/local/nvm
+      NODE_VERSION: 6.3.0
+      NODE_PATH: /usr/local/nvm/versions/node/v6.3.0/lib/node_modules
+  php7.1:
+    container_name: php71fpm
+    #image: php:7.1.11-fpm
+    #image: lobj/php
+    image: registry.cn-hangzhou.aliyuncs.com/lobj/php:71
+    #build: ./php
+    ports:
+      - "9001:9000"
+    extra_hosts:
+      - "localhost:172.17.0.1"
+    volumes:
+      - ./bin:/user/lobjbin
+      - ./php/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+     # - ./sites-enabled:/etc/nginx/sites-enabled
+    volumes_from:
+      - wwwdata
+    #privileged: true
+    environment:
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/user/lobjbin
+      NGINX_GENERATE_DEFAULT_VHOST: 1
+      STATUS_PAGE_ALLOWED_IP: 127.0.0.1
+      NVM_DIR: /usr/local/nvm
+      NODE_VERSION: 6.3.0
+      NODE_PATH: /usr/local/nvm/versions/node/v6.3.0/lib/node_modules
+    mysql:
+      image: 'mysql:5.7.18'
+      container_name: mysql57
+      #restart: always
+      ports:
+        - '3306:3306/tcp'
+      environment:
+        - MYSQL_MAJOR=5.7
+        - 'availability:az==2'
+        - MYSQL_ROOT_PASSWORD=root
+      shm_size: 0
+      volumes:
+        - './mysqldata:/var/lib/mysql:rw'
+      ### REDIS Container #######################################
+      redis:
+        image: 'redis:4.0'
+        container_name: lnmp-redis
+        ports:
+          - "6379:6379"
+        volumes:
+          - "./redis/data:/data"
+        environment:
+          - REDIS_PASSWORD=developer
+
+      #####  data
+    wwwdata:
+      image: tianon/true
+      container_name: wwwdata
+      volumes:
+        - ./data:/data
