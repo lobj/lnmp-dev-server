@@ -43,33 +43,33 @@ services:
       NVM_DIR: /usr/local/nvm
       NODE_VERSION: 6.3.0
       NODE_PATH: /usr/local/nvm/versions/node/v6.3.0/lib/node_modules
-    mysql:
-      image: 'mysql:5.7.18'
-      container_name: mysql57
-      #restart: always
-      ports:
-        - '3306:3306/tcp'
-      environment:
-        - MYSQL_MAJOR=5.7
-        - 'availability:az==2'
-        - MYSQL_ROOT_PASSWORD=root
-      shm_size: 0
-      volumes:
-        - './mysqldata:/var/lib/mysql:rw'
-      ### REDIS Container #######################################
-      redis:
-        image: 'redis:4.0'
-        container_name: lnmp-redis
-        ports:
-          - "6379:6379"
-        volumes:
-          - "./redis/data:/data"
-        environment:
-          - REDIS_PASSWORD=developer
+  mysql:
+    image: 'mysql:5.7.18'
+    container_name: mysql57
+    #restart: always
+    ports:
+      - '3306:3306/tcp'
+    environment:
+      - MYSQL_MAJOR=5.7
+      - 'availability:az==2'
+      - MYSQL_ROOT_PASSWORD=root
+    shm_size: 0
+    volumes:
+      - './mysqldata:/var/lib/mysql:rw'
+    ### REDIS Container #######################################
+  redis:
+    image: 'redis:4.0'
+    container_name: lnmp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./redis/data:/data"
+    environment:
+      - REDIS_PASSWORD=developer
 
-      #####  data
-    wwwdata:
-      image: tianon/true
-      container_name: wwwdata
-      volumes:
-        - ./data:/data
+  #####  data
+  wwwdata:
+    image: tianon/true
+    container_name: wwwdata
+    volumes:
+      - ./data:/data
