@@ -24,7 +24,34 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/lobj/php:71
     #build: ./php
     ports:
-      - "9001:9000"
+      - "9071:9000"
+    extra_hosts:
+      - "localhost:172.17.0.1"
+      - "db.dev.com:172.17.0.1"
+      - "redis.dev.com:172.17.0.1"
+    volumes:
+      - ./bin:/user/lobjbin
+      - ./php/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+     # - ./sites-enabled:/etc/nginx/sites-enabled
+    volumes_from:
+      - wwwdata
+    #privileged: true
+    environment:
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/user/lobjbin
+      NGINX_GENERATE_DEFAULT_VHOST: 1
+      STATUS_PAGE_ALLOWED_IP: 127.0.0.1
+      NVM_DIR: /usr/local/nvm
+      NODE_VERSION: 6.3.0
+      NODE_PATH: /usr/local/nvm/versions/node/v6.3.0/lib/node_modules
+  php5.6:
+    container_name: php56fpm
+    #image: php:7.1.11-fpm
+    #image: lobj/php
+    #image: tetraweb/php:5.6-fpm
+    image: php:5-fpm
+    #build: ./php
+    ports:
+      - "9056:9000"
     extra_hosts:
       - "localhost:172.17.0.1"
       - "db.dev.com:172.17.0.1"
